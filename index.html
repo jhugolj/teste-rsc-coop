@@ -373,13 +373,19 @@ nav a:hover{color:var(--header);}
             <div class="item"><div class="label">Peso Prática</div><div class="value" id="displayPesoPratica">0.0%</div></div>
         </div>
         <div class="explicacao-maturidade">
-            <strong>Como funciona:</strong> O <strong>Índice de Maturidade (I<sub>m</sub>)</strong> é a média dos três fatores normalizados (0,3 a 1,0). O <strong>Peso Documental</strong> é:
-            <p><span class="fraction"><span class="numerator">(5 × I<sub>m</sub>) + 2</span><span class="denominator">14</span></span></p>
-            <ul>
-                <li><strong>Nascentes</strong> (I<sub>m</sub> baixo): peso documental ~25%, prática ~75%.</li>
-                <li><strong>Maduras</strong> (I<sub>m</sub> alto): peso documental ~50%, prática ~50%.</li>
-            </ul>
-        </div>
+        <strong>Como funciona:</strong><br>
+        O <strong>Índice de Maturidade (I<sub>m</sub>)</strong> é calculado pela média dos três fatores normalizados: idade, vitalidade e retenção. Cada fator varia de <b>0,3</b> a <b>1,0</b>, resultando em I<sub>m</sub> entre 0,3 e 1,0.<br>
+        O <strong>Peso Documental</strong> é calculado pela fórmula:
+        <p style="text-align:center;"><span class="fraction">
+            <span class="numerator"><b>(5 × I<sub>m</sub>) + 2</b></span>
+            <span class="denominator"><b>14</b></span>
+        </span></p>
+        <strong>Interpretação:</strong>
+        <ul>
+            <li>Cooperativas <strong>nascentes</strong> (com vitalidade fragilizada e baixa retenção de membros – I<sub>m</sub> baixo) têm o menor peso documental (<strong>25%</strong>) e o maior peso da prática social (<strong>75%</strong>), valorizando mais a prática organizacional observada.</li>
+            <li>Cooperativas <strong>maduras</strong> (com vitalidade consolidada e retenção estável – I<sub>m</sub> alto) têm peso documental igual ao da prática social (<strong>50% cada</strong>), equiparando a importância da documentação à prática organizacional.</li>
+        </ul>
+    </div>
 
                 <!-- CARACTERIZAÇÃO -->
         <div class="campo" id="legenda">
