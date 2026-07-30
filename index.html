@@ -68,25 +68,6 @@
             -webkit-text-size-adjust: 100%;
         }
 
-        /* ===== PROGRESS BAR ===== */
-        .progress-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: var(--progress-h);
-            background: #e2e8f0;
-            z-index: 9999;
-            transition: opacity .3s;
-        }
-        .progress-bar .fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, var(--accent), var(--success));
-            border-radius: 0 2px 2px 0;
-            transition: width .4s ease;
-        }
-
         /* ===== HEADER ===== */
         header {
             background: linear-gradient(135deg, #384d6e 0%, #0f4c81 50%, var(--accent) 100%);
@@ -827,6 +808,8 @@
 
         .botoes-secundarios {display: flex;flex-wrap: wrap;justify-content: center;gap: 12px;}
 
+        #diagnosticoTitle {text-align: center; font-size: 1.8rem; font-weight: 800; color: var(--header); margin-bottom: 20px;}
+
         /* ===== RESULTADOS ===== */
         .result-panel {
             display: flex;
@@ -872,14 +855,11 @@
         .principle-row {
             display: flex;
             gap: 14px;
-            flex-wrap: nowrap;
+            flex-wrap: wrap;          /* permite quebrar para a linha de baixo */
             align-items: flex-start;
-            overflow-x: auto;
             padding: 12px 0;
-            scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch;
-            justify-content: center;
-        }
+            justify-content: center;  /* centraliza os cards */
+}
         .card {
             background: var(--card);
             border: 1px solid var(--border);
@@ -1200,11 +1180,33 @@
             color: var(--success);
         }
 
+        /* ===== DIAGNÓSTICO ===== */
+        .ident-section {
+            background: var(--card);
+            border: 1px solid #c7d2fe;
+            border-radius: var(--radius);
+            padding: 24px;
+            margin: 20px 0;
+            box-shadow: var(--shadow);
+        }
+
+        #diagnosticoCompleto h2 {
+            color: #065f46;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            text-align: center;
+            font-size: 1.25rem;
+        }
+
         /* ===== TABELA OCULTA ===== */
         .table-container {
             display: none;
         }
 
+       
         /* ===== IMPRESSÃO ===== */
         @media print {
             body {
@@ -1426,9 +1428,6 @@
 </head>
 <body>
 
-    <!-- PROGRESS BAR -->
-    <div class="progress-bar"><div class="fill" id="progressFill"></div></div>
-
     <header>
         <div class="container">
             <h1><i class="fas fa-leaf"></i> Avaliação de Cooperativas de Agricultura Familiar</h1>
@@ -1465,13 +1464,9 @@
             </nav>
         </aside>
 
-        <!-- CONTEÚDO PRINCIPAL -->
         <main class="content-area">
 
-    <!-- CONTEÚDO PRINCIPAL -->
-    <main class="content-area">
-
-        <!-- APRESENTAÇÃO -->
+            <!-- APRESENTAÇÃO -->
         <div class="campo" id="apresentacao">
             <h2><i class="fas fa-info-circle"></i> Sobre esta avaliação</h2>
             <p>Metodologia desenvolvida no âmbito do doutorado em Engenharia de Produção da UTFPR, para avaliar a Responsabilidade Social Corporativa (RSC) em cooperativas de agricultura familiar, contemplando os eixos documental e prático.</p>
@@ -1531,10 +1526,8 @@
         </span>
     </div>
 </div>
-<div style="font-size: 0.9rem; color: #475569; margin-top: 8px;">
-        Resulta em peso entre <strong>25%</strong> e <strong>50%</strong>
-    </div>
-        </span></p>
+
+</span></p>
         <strong>Interpretação:</strong>
         <ul>
             <li>Cooperativas <strong>nascentes</strong> (aquelas que ainda estão se firmando, com pouca estabilidade e que retêm poucos sócios – ou seja, com <b>I<sub>m</sub> baixo</b>) dão menos peso à documentação formal (<strong>25%</strong>) e mais peso à prática do dia a dia (<strong>75%</strong>). Isso significa que, nesse caso, o que vale mais é como a cooperativa funciona na prática.</li>
@@ -1569,10 +1562,9 @@
 
          <div class="campo" id="avaliação">
             <h2><i class="fas fa-balance-scale"></i> Avaliação</h2>
-        </div>
-
         <!-- CARDS GERADOS POR JS -->
         <div id="cardsContainer"></div>
+        </div>
 
         <!-- BOTÕES -->
         <div class="button-container">
@@ -1583,20 +1575,22 @@
             </div>
         </div>
 
+        <!-- TÍTULO DO DIAGNÓSTICO (aparece acima dos resultados) -->
+        <div class="campo" id="diagnosticoCompleto">
+            <h2><i class="fas fa-chart-simple"> </i>Diagnóstico Organizacional<i class="fas fa-chart-simple"> </i></h2>
+
         <!-- PAINEL DE RESULTADOS -->
         <div class="result-panel" id="resultPanel"></div>
 
         <!-- RECOMENDAÇÕES -->
         <div id="recomendacoes" style="display:none">
-            <h3 id="diagnosticoTitle"><i class="fas fa-stethoscope"></i> Diagnóstico Organizacional</h3>
             <div id="cardsDiagnostico"></div> <!-- Aqui será inserida a tabela -->
+        </div>
         </div>
 
     </main>
 </div>
-<div>
-<h2 class="titulo-tabela" id="avaliacao">Tabela Avaliativa</h2>
-</div>
+
     <!-- TABELA OCULTA (fonte de dados) -->
     <div class="table-container">
         <table id="tabela">
@@ -1631,22 +1625,22 @@
                 <tr class="principio-titulo" style="display:none"><td colspan="6">4. Autonomia e Independência</td></tr>
                 <tr data-principio="4" data-id="P4_I1"><td>1</td><td>Definições de planos e decisões sem interferência externa</td><td class="pergunta-titulo">A cooperativa toma suas próprias decisões estratégicas sem interferências externas?</td><td class="pergunta-detalhe">Verificar se a cooperativa mantém liberdade para definir suas estratégias, planos e prioridades sem sofrer interferência externa (de governos, grandes empresas, financiadores, etc.), respeitando a vontade coletiva dos associados.</td><td><select class="doc" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td><select class="ent" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
                 <tr data-principio="4" data-id="P4_I2"><td>2</td><td>Fontes próprias de renda e governança sem controle externo</td><td class="pergunta-titulo">A cooperativa mantém independência financeira e institucional de outras organizações?</td><td class="pergunta-detalhe">Verificar se a cooperativa possui fontes próprias de recursos (capital dos associados, fundos internos, receita das atividades) que lhe garantam independência, evitando dependência excessiva de financiamentos ou parcerias que possam comprometer sua autonomia.</td><td><select class="doc" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td><select class="ent" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
-                <tr data-principio="4" data-id="P4_I3"><td>3</td><td>Controle democrático em parcerias externas</td><td class="pergunta-titulo"></td>As parcerias externas são estabelecidas mantendo o controle democrático?<td class="pergunta-detalhe"></td>Verificar se, ao firmar parcerias com outras organizações (empresas, governo, ONGs), a cooperativa mantém o controle democrático sobre as decisões e não aceita condições externas que firam seus princípios ou a soberania dos associados.<td><select class="doc" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td><select class="ent" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
-                <tr data-principio="4" data-id="P4_I4"><td>4</td><td>Cooperados participam da gestão e as decisões seguem princípios do cooperativismo</td>A cooperativa pratica a autogestão e preserva sua identidade cooperativa?<td class="pergunta-titulo"></td><td class="pergunta-detalhe">Verificar se a cooperativa pratica a autogestão, ou seja, são os próprios associados (e suas lideranças eleitas) que administram a cooperativa, sem que terceiros assumam o controle ou imponham modelos externos.</td><td><select class="doc" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td><select class="ent" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
+                <tr data-principio="4" data-id="P4_I3"><td>3</td><td>Controle democrático em parcerias externas</td><td class="pergunta-titulo">As parcerias externas são estabelecidas mantendo o controle democrático?</td><td class="pergunta-detalhe">Verificar se, ao firmar parcerias com outras organizações (empresas, governo, ONGs), a cooperativa mantém o controle democrático sobre as decisões e não aceita condições externas que firam seus princípios ou a soberania dos associados.</td><td><select class="doc" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td><select class="ent" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
+                <tr data-principio="4" data-id="P4_I4"><td>4</td><td>Cooperados participam da gestão e as decisões seguem princípios do cooperativismo</td><td class="pergunta-titulo">A cooperativa pratica a autogestão e preserva sua identidade cooperativa?</td><td class="pergunta-detalhe">Verificar se a cooperativa pratica a autogestão, ou seja, são os próprios associados (e suas lideranças eleitas) que administram a cooperativa, sem que terceiros assumam o controle ou imponham modelos externos.</td><td><select class="doc" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td><select class="ent" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
                 <tr data-principio="4" data-id="P4_I5"><td>5</td><td>Mantém foco na missão social mesmo sob pressões externas</td><td class="pergunta-titulo">A cooperativa resiste a pressões externas que comprometem sua missão social?</td><td class="pergunta-detalhe">Verificar se a cooperativa preserva seus valores e princípios cooperativistas mesmo diante de pressões (políticas, econômicas, de mercado) e se defende ativamente sua missão social, priorizando o bem-estar dos associados e da comunidade sobre interesses alheios.</td><td><select class="doc" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td><select class="ent" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
                 <!-- P5 -->
                 <tr class="principio-titulo"><td colspan="6">5. Educação, Treinamento e Informação</td></tr>
-                <tr data-principio="5" data-id="P5_I1"><td>1</td><td>Aprendizado técnico, gerencial e contínuo</td><td class="pergunta-titulo">A cooperativa oferece ou incentiva a realização de cursos de capacitação técnica ou gerencial continuadamente aos seus membros?</td><td class="pergunta-detalhe">Verificar se a cooperativa oferece treinamentos que ajudam os associados a melhorar a produção, a gestão da propriedade e a participação na cooperativa.</p></td><td class="center"><select class="doc" aria-label="Registro Documental" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td class="center"><select class="ent" aria-label="Prática Social" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
-                <tr data-principio="5" data-id="P5_I2"><td>2</td><td>Aprendizado sobre cooperativismo e seus princípios</td><td class="pergunta-titulo">Os cooperados recebem formação sobre os princípios e valores do cooperativismo?</td><td class="pergunta-detalhe">Verificar se a cooperativa promove educação cooperativista, explicando os princípios, direitos e deveres, a história do cooperativismo e a importância da participação democrática.</p></td><td class="center"><select class="doc" aria-label="Registro Documental" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td class="center"><select class="ent" aria-label="Prática Social" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
-                <tr data-principio="5" data-id="P5_I3"><td>3</td><td>Destinação dos 5% das sobras ao FATES</td><td class="pergunta-titulo">A cooperativa contribui ao FATES?</td><td class="pergunta-detalhe">Verificar se a cooperativa destina acima de 5% das sobras líquidas para o Fundo de Assistência Técnica, Educacional e Social - FATES, e se esse recurso é aplicado de forma transparente em ações concretas de assistência técnica, educação (formal ou cooperativista), saúde, lazer, apoio social aos associados, seus familiares e, quando previsto, aos empregados.</p></td><td class="center"><select class="doc" aria-label="Registro Documental" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td class="center"><select class="ent" aria-label="Prática Social" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
-                <tr data-principio="5" data-id="P5_I4"><td>4</td><td>Educação em agroecologia e práticas sustentáveis</td><td class="pergunta-titulo">A cooperativa oferece ou incentiva a realização de cursos em agroecologia e práticas sustentáveis?</td><td class="pergunta-detalhe">Verificar se a cooperativa oferece capacitação em agroecologia, manejo sustentável do solo, água, florestas, redução de agrotóxicos e práticas que respeitem o meio ambiente.</p></td><td class="center"><select class="doc" aria-label="Registro Documental" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td class="center"><select class="ent" aria-label="Prática Social" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
-                <tr data-principio="5" data-id="P5_I5"><td>5</td><td>Educação financeira e ambiental</td><td class="pergunta-titulo">São oferecidos programas de educação financeira e ambiental aos cooperados?</td><td class="pergunta-detalhe">Verificar se a cooperativa promove educação financeira (planejamento e controle de gastos) e ambiental (uso consciente de recursos naturais) para os associados e suas famílias.</p></td><td class="center"><select class="doc" aria-label="Registro Documental" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td class="center"><select class="ent" aria-label="Prática Social" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
-                <tr data-principio="5" data-id="P5_I6"><td>6</td><td>Acesso e uso de ferramentas digitais pelos associados</td><td class="pergunta-titulo">A cooperativa promove programas de inclusão digital para seus membros?</td><td class="pergunta-detalhe">Verificar se a cooperativa está apoiando os associados a terem acesso e a saberem usar ferramentas digitais básicas para a comunicação, gestão da produção e participação nas decisões, considerando as condições concretas da agricultura familiar.</p></td><td class="center"><select class="doc" aria-label="Registro Documental" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td class="center"><select class="ent" aria-label="Prática Social" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
-                <tr data-principio="5" data-id="P5_I7"><td>7</td><td>Transferência de conhecimento e inovação tecnológica</td><td class="pergunta-titulo">A cooperativa promove a transferência de conhecimento e inovação tecnológica?</td><td class="pergunta-detalhe">Verificar se a cooperativa estimula a transferência de conhecimento entre associados e parceiros tecnológicos (visitas de campo, dias de campo, grupos de aprendizagem e desenvolvimento de tecnologias) e a adoção de inovações tecnológicas apropriadas à agricultura familiar.</p></td><td class="center"><select class="doc" aria-label="Registro Documental" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td class="center"><select class="ent" aria-label="Prática Social" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
-                <tr data-principio="5" data-id="P5_I8"><td>8</td><td>Formação em direitos humanos, diversidade e desenvolvimento territorial</b></td><td class="pergunta-titulo">A cooperativa produz materiais ou realiza cursos sobre responsabilidade social, diversidade e desenvolvimento territorial?</td><td class="pergunta-detalhe">Verificar se a cooperativa produz materiais educativos acessíveis (cartilhas, vídeos, folders), ou realiza programas de formação (cursos, oficinas, palestras) que abordam a responsabilidade social, direitos humanos, equidade de gênero, inclusão de grupos vulnerabilizados (PCDs, comunidades tradicionais, LGBTQIA+, idosos) e desenvolvimento territorial, promovendo uma cultura organizacional pautada na justiça social e no respeito às diferenças.</p></td><td class="center"><select class="doc" aria-label="Registro Documental" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td class="center"><select class="ent" aria-label="Prática Social" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
-                <tr data-principio="5" data-id="P5_I9"><td>9</td><td>Incentivo à sucessão familiar e renovação geracional</td><td class="pergunta-titulo">A cooperativa produz materiais ou realiza programas específicos para jovens?</td><td class="pergunta-detalhe">Verificar se a cooperativa produz materiais educativos acessíveis, ou incentiva programas direcionados ao público jovem (visando a sucessão familiar e a renovação geracional).</p></td><td class="center"><select class="doc" aria-label="Registro Documental" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td class="center"><select class="ent" aria-label="Prática Social" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
-                <tr data-principio="5" data-id="P5_I10"><td>10</td><td>Incentivo à liderança feminina e equidade de gênero</td><td class="pergunta-titulo">A cooperativa produz materiais ou realiza programas específicos para mulheres?</td><td class="pergunta-detalhe">Verificar se a cooperativa produz materiais educativos acessíveis, ou incentiva programas direcionados às mulheres (visando a liderança feminina e a equidade de gênero nos espaços de decisão).</p></td><td class="center"><select class="doc" aria-label="Registro Documental" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td class="center"><select class="ent" aria-label="Prática Social" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
-                <tr data-principio="5" data-id="P5_I11"><td>11</td><td>Investimento em gestão social e fortalecimento organizacional</td><td class="pergunta-titulo">A cooperativa realiza investimentos planejados e continuados em gestão social para fortalecer sua estrutura organizacional e qualificar a participação dos associados?</td><td class="pergunta-detalhe">Verificar se a cooperativa destina recursos (financeiros, humanos, logísticos) de forma planejada e continuada para ações de gestão social, tais como: planejamento estratégico participativo, desenvolvimento e sucessão de lideranças, profissionalização da gestão administrativa e financeira, governança democrática, transparência ativa e prestação de contas qualificada, visando o fortalecimento institucional e a sustentabilidade da cooperativa.</p></td><td class="center"><select class="doc" aria-label="Registro Documental" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td class="center"><select class="ent" aria-label="Prática Social" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
+                <tr data-principio="5" data-id="P5_I1"><td>1</td><td>Aprendizado técnico, gerencial e contínuo</td><td class="pergunta-titulo">A cooperativa oferece ou incentiva a realização de cursos de capacitação técnica ou gerencial continuadamente aos seus membros?</td><td class="pergunta-detalhe">Verificar se a cooperativa oferece treinamentos que ajudam os associados a melhorar a produção, a gestão da propriedade e a participação na cooperativa.</td><td class="center"><select class="doc" aria-label="Registro Documental" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td class="center"><select class="ent" aria-label="Prática Social" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
+                <tr data-principio="5" data-id="P5_I2"><td>2</td><td>Aprendizado sobre cooperativismo e seus princípios</td><td class="pergunta-titulo">Os cooperados recebem formação sobre os princípios e valores do cooperativismo?</td><td class="pergunta-detalhe">Verificar se a cooperativa promove educação cooperativista, explicando os princípios, direitos e deveres, a história do cooperativismo e a importância da participação democrática.</td><td class="center"><select class="doc" aria-label="Registro Documental" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td class="center"><select class="ent" aria-label="Prática Social" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
+                <tr data-principio="5" data-id="P5_I3"><td>3</td><td>Destinação dos 5% das sobras ao FATES</td><td class="pergunta-titulo">A cooperativa contribui ao FATES?</td><td class="pergunta-detalhe">Verificar se a cooperativa destina acima de 5% das sobras líquidas para o Fundo de Assistência Técnica, Educacional e Social - FATES, e se esse recurso é aplicado de forma transparente em ações concretas de assistência técnica, educação (formal ou cooperativista), saúde, lazer, apoio social aos associados, seus familiares e, quando previsto, aos empregados.</td><td class="center"><select class="doc" aria-label="Registro Documental" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td class="center"><select class="ent" aria-label="Prática Social" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
+                <tr data-principio="5" data-id="P5_I4"><td>4</td><td>Educação em agroecologia e práticas sustentáveis</td><td class="pergunta-titulo">A cooperativa oferece ou incentiva a realização de cursos em agroecologia e práticas sustentáveis?</td><td class="pergunta-detalhe">Verificar se a cooperativa oferece capacitação em agroecologia, manejo sustentável do solo, água, florestas, redução de agrotóxicos e práticas que respeitem o meio ambiente.</td><td class="center"><select class="doc" aria-label="Registro Documental" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td class="center"><select class="ent" aria-label="Prática Social" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
+                <tr data-principio="5" data-id="P5_I5"><td>5</td><td>Educação financeira e ambiental</td><td class="pergunta-titulo">São oferecidos programas de educação financeira e ambiental aos cooperados?</td><td class="pergunta-detalhe">Verificar se a cooperativa promove educação financeira (planejamento e controle de gastos) e ambiental (uso consciente de recursos naturais) para os associados e suas famílias.</td><td class="center"><select class="doc" aria-label="Registro Documental" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td class="center"><select class="ent" aria-label="Prática Social" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
+                <tr data-principio="5" data-id="P5_I6"><td>6</td><td>Acesso e uso de ferramentas digitais pelos associados</td><td class="pergunta-titulo">A cooperativa promove programas de inclusão digital para seus membros?</td><td class="pergunta-detalhe">Verificar se a cooperativa está apoiando os associados a terem acesso e a saberem usar ferramentas digitais básicas para a comunicação, gestão da produção e participação nas decisões, considerando as condições concretas da agricultura familiar.</td><td class="center"><select class="doc" aria-label="Registro Documental" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td class="center"><select class="ent" aria-label="Prática Social" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
+                <tr data-principio="5" data-id="P5_I7"><td>7</td><td>Transferência de conhecimento e inovação tecnológica</td><td class="pergunta-titulo">A cooperativa promove a transferência de conhecimento e inovação tecnológica?</td><td class="pergunta-detalhe">Verificar se a cooperativa estimula a transferência de conhecimento entre associados e parceiros tecnológicos (visitas de campo, dias de campo, grupos de aprendizagem e desenvolvimento de tecnologias) e a adoção de inovações tecnológicas apropriadas à agricultura familiar.</td><td class="center"><select class="doc" aria-label="Registro Documental" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td class="center"><select class="ent" aria-label="Prática Social" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
+                <tr data-principio="5" data-id="P5_I8"><td>8</td><td>Formação em direitos humanos, diversidade e desenvolvimento territorial</td><td class="pergunta-titulo">A cooperativa produz materiais ou realiza cursos sobre responsabilidade social, diversidade e desenvolvimento territorial?</td><td class="pergunta-detalhe">Verificar se a cooperativa produz materiais educativos acessíveis (cartilhas, vídeos, folders), ou realiza programas de formação (cursos, oficinas, palestras) que abordam a responsabilidade social, direitos humanos, equidade de gênero, inclusão de grupos vulnerabilizados (PCDs, comunidades tradicionais, LGBTQIA+, idosos) e desenvolvimento territorial, promovendo uma cultura organizacional pautada na justiça social e no respeito às diferenças.</td><td class="center"><select class="doc" aria-label="Registro Documental" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td class="center"><select class="ent" aria-label="Prática Social" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
+                <tr data-principio="5" data-id="P5_I9"><td>9</td><td>Incentivo à sucessão familiar e renovação geracional</td><td class="pergunta-titulo">A cooperativa produz materiais ou realiza programas específicos para jovens?</td><td class="pergunta-detalhe">Verificar se a cooperativa produz materiais educativos acessíveis, ou incentiva programas direcionados ao público jovem (visando a sucessão familiar e a renovação geracional).</td><td class="center"><select class="doc" aria-label="Registro Documental" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td class="center"><select class="ent" aria-label="Prática Social" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
+                <tr data-principio="5" data-id="P5_I10"><td>10</td><td>Incentivo à liderança feminina e equidade de gênero</td><td class="pergunta-titulo">A cooperativa produz materiais ou realiza programas específicos para mulheres?</td><td class="pergunta-detalhe">Verificar se a cooperativa produz materiais educativos acessíveis, ou incentiva programas direcionados às mulheres (visando a liderança feminina e a equidade de gênero nos espaços de decisão).</td><td class="center"><select class="doc" aria-label="Registro Documental" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td class="center"><select class="ent" aria-label="Prática Social" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
+                <tr data-principio="5" data-id="P5_I11"><td>11</td><td>Investimento em gestão social e fortalecimento organizacional</td><td class="pergunta-titulo">A cooperativa realiza investimentos planejados e continuados em gestão social para fortalecer sua estrutura organizacional e qualificar a participação dos associados?</td><td class="pergunta-detalhe">Verificar se a cooperativa destina recursos (financeiros, humanos, logísticos) de forma planejada e continuada para ações de gestão social, tais como: planejamento estratégico participativo, desenvolvimento e sucessão de lideranças, profissionalização da gestão administrativa e financeira, governança democrática, transparência ativa e prestação de contas qualificada, visando o fortalecimento institucional e a sustentabilidade da cooperativa.</td><td class="center"><select class="doc" aria-label="Registro Documental" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td class="center"><select class="ent" aria-label="Prática Social" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
                 <!-- P6 -->
                 <tr class="principio-titulo" style="display:none"><td colspan="6">6. Intercooperação</td></tr>
                 <tr data-principio="6" data-id="P6_I1"><td>1</td><td>Participação em redes e alianças intercooperativas</td><td class="pergunta-titulo">A cooperativa participa ativamente de redes e alianças com outras cooperativas?</td><td class="pergunta-detalhe">Verificar se a cooperativa participa de redes, federações, centrais ou alianças com outras cooperativas (da agricultura familiar, crédito, consumo, etc.) para fortalecer a atuação coletiva e trocar experiências.</td><td><select class="doc" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Existe</option></select></td><td><select class="ent" onchange="recalcularTudo()"><option value="0">Não Existe</option><option value="1">Mínima</option><option value="2">Parcial</option><option value="3">Significativa</option><option value="4">Abrangente</option><option value="5">Plena</option></select></td><td class="indice">0.00</td></tr>
@@ -1863,7 +1857,6 @@
                 if (d > 0 || e > 0) respondidos++;
             });
             const pct = total > 0 ? Math.round((respondidos / total) * 100) : 0;
-            document.getElementById('progressFill').style.width = pct + '%';
             document.getElementById('pctText').textContent = pct + '%';
             document.getElementById('pctBarFill').style.width = pct + '%';
         }
@@ -1995,9 +1988,11 @@
             const diagDiv = document.getElementById('cardsDiagnostico');
             diagDiv.innerHTML = '';
             for (let p = 1; p <= 7; p++) {
-                const lista = (arr, cls) => arr.length ?
-                    `<div class="categoria ${cls}"><strong>${cls==='forte'?'Práticas Positivas':cls==='lacuna'?'Ajustes Documentais':cls==='pratica'?'Melhorar na Prática':'Ações Prioritárias'}</strong><ul><li>${arr.join('</li><li>')}</li></ul></div>` :
-                    `<div class="categoria ${cls}"><span class="sem-itens">Nenhum item</span></div>`;
+                const lista = (arr, cls) => {
+    const titulo = cls === 'forte' ? '✅ Práticas Exemplares' : cls === 'lacuna' ? '📄 Documentar Práticas Existentes' : cls === 'pratica' ? '👥 Aprimorar a Prática' : '🚨 Ações Prioritárias';
+    const conteudo = arr.length ? `<ul><li>${arr.join('</li><li>')}</li></ul>` : `<span class="sem-itens">Nenhum item</span>`;
+    return `<div class="categoria ${cls}"><strong>${titulo}</strong>${conteudo}</div>`;
+};
                 const card = document.createElement('div');
                 card.className = 'diagnostico-card';
                 card.dataset.principio = p;
@@ -2177,4 +2172,4 @@
     </script>
 </body>
 </html>
-```
+
